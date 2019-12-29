@@ -19,6 +19,7 @@ const CacheSchema: Schema = new Schema({
     }
 }, { timestamps: true })
 
+// TTL for two minutes we can change to 0 if want to dynamically chagne the TTL 
 CacheSchema.index({createdAt: 1},{expireAfterSeconds: 180})
 const Cache: Model<ICache> = model("Cache", CacheSchema);
 export default Cache

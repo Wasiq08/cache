@@ -1,8 +1,10 @@
 import Cache, { ICache } from '../models/Cache';
+import { Logfactory } from "../ConfigLog4j";
 
 function generateRandomKey() {
     return Math.random().toString(36).substring(7);
 }
+const log = Logfactory.getLogger("CacheService");
 export default class CacheService {
 
     public save = async (data: any): Promise<any> => {
@@ -16,7 +18,6 @@ export default class CacheService {
     public findAll = async (): Promise<any> => {
         try {
             const cacheKeys = await Cache.find({})
-            console.log('sadada', cacheKeys);
             return cacheKeys;
         } catch (error) {
             return error
@@ -60,10 +61,10 @@ export default class CacheService {
         try {
             const cacheKey = await Cache.findOne({ key: key });
             if (cacheKey != null) {
-              //  logger.info('Cache hit');
+                log.info('Cache hit');
                 return cacheKey;
             } else {
-               // logger.info('Cache miss');
+                log.info('Cache miss');
                 const cacheKey = generateRandomKey;
                 const updatedCache = this.save({ data: cacheKey });
                 return updatedCache;
