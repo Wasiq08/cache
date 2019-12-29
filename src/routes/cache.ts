@@ -13,6 +13,9 @@ cache.get('/:id', controller.findOne);
 // Remove a specific Cache with Id
 cache.delete('/:id', controller.remove);
 
+// Update a User with Id
+cache.put('/:id', controller.update);
+
 // Create a Cache Key
 cache.post('/', controller.save);
 
