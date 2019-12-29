@@ -14,9 +14,11 @@ const CacheSchema: Schema = new Schema({
     key: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     }
-})
+}, { timestamps: true })
 
+CacheSchema.index({createdAt: 1},{expireAfterSeconds: 180})
 const Cache: Model<ICache> = model("Cache", CacheSchema);
 export default Cache

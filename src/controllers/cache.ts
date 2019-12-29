@@ -7,7 +7,7 @@ export default class CacheController {
     public findAll = async (req: Request, res: Response) => {
         try {
             const cache = await cacheService.findAll();
-            if (cache != null) {
+            if (cache.length > 0 && cache != null) {
                 res.status(200).send({
                     success: true,
                     data: cache
@@ -29,7 +29,19 @@ export default class CacheController {
     };
 
     public findOne = async (req: Request, res: Response): Promise<any> => {
-        return null;
+        try {
+            const cache = await cacheService.findOne(req.params.key)
+            res.status(200).send({
+                success: true,
+                data: cache
+            });
+        } catch (error) {
+            res.status(500).send({
+                success: false,
+                message: error.toString(),
+                data: null
+            });
+        }
     };
 
     public update = async (req: Request, res: Response): Promise<any> => {
@@ -80,15 +92,35 @@ export default class CacheController {
 
     public save = async (req: Request, res: Response): Promise<any> => {
         try {
-            const cache = await cacheService.save(req.body)
-            if (cache) {
+            // First check and fetch all the caches if present
+            const cachesLength = await cacheService.findAll();
+            //  We Want to restict the cache to save only 6 keys
+            // Assume it was first time we dont have any cache present
+            if (cachesLength.length === 0) {
+                const cache = await cacheService.save(req.body)
+                if (cache) {
+                    res.status(201).send({
+                        success: true,
+                        message: 'Cache Successfully created',
+                        data: cache
+                    });
+                }
+                // Checking the cache size   
+            } else if (cachesLength.length > 0 && cachesLength.length <= 5) {
+                const cache = await cacheService.save(req.body)
+                if (cache) {
+                    res.status(201).send({
+                        success: true,
+                        message: 'Cache Successfully created',
+                        data: cache
+                    });
+                }
+            } else {
                 res.status(201).send({
                     success: true,
-                    message: 'Cache Successfully created',
-                    data: cache
+                    message: 'Cache has reached its limit you can delete old keys for adding new key',
                 });
             }
-
         } catch (error) {
             res.status(500).send({
                 success: false,
@@ -99,7 +131,16 @@ export default class CacheController {
     }
 
     public removeAll = async (req: Request, res: Response): Promise<any> => {
-        return null;
+        try {
+            await cacheService.removeAll();
+            res.status(204).send();
+        } catch (err) {
+            res.status(500).send({
+                success: false,
+                message: err.toString(),
+                data: null
+            });
+        }
     }
 
 }

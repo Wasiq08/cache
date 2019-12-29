@@ -8,18 +8,18 @@ const controller = new Controller();
 cache.get('/', controller.findAll);
 
 // Retrieve a Specific Cache Key
-cache.get('/:id', controller.findOne);
+cache.get('/:key', controller.findOne);
 
 // Remove a specific Cache with Id
 cache.delete('/:id', controller.remove);
 
-// Update a User with Id
+// Update a Cache with Id
 cache.put('/:id', controller.update);
 
 // Create a Cache Key
 cache.post('/', controller.save);
 
 // Remove All Cache Keys
-cache.delete('/all', controller.removeAll);
+cache.delete('/remove/all', controller.removeAll);
 
 export default cache;
